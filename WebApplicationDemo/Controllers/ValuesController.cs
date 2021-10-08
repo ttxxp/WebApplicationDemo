@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Text;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace WebApplicationDemo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
@@ -40,6 +44,19 @@ namespace WebApplicationDemo.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+        /// <summary>
+        /// 调用微软文本转语音
+        /// </summary>
+        [HttpPost]
+        public AudioDataStream Azure()
+        {
+                var config = SpeechConfig.FromSubscription("<paste-your-speech-key-here>", "<paste-your-speech-location/region-here>");
+                SpeechSynthesizer synthesizer = new SpeechSynthesizer(config, null);
+
+                Task<SpeechSynthesisResult> result = synthesizer.SpeakTextAsync("Getting the response as an in-memory stream.");
+                AudioDataStream stream = AudioDataStream.FromResult(result.Result);
+            return stream;
         }
     }
 }
